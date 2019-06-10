@@ -6,33 +6,37 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-
+from scipy.stats import linregress
 
 #%%
 
-
-
-def evaluate():
+def evaluate(args):
     """
     Function makes plots on the results and also calculates pcc and r2 scores on both the validation and training data
     """
-    
+
     # Load data
     AI = np.load(pjoin('results', 'AI.npy'))
     AI_inv = np.load(pjoin('results', 'AI_inv.npy')) * AI.std() + AI.mean()
 
     # Make AI, predicted AI plots
-    make_plots()
+    make_plots(AI, AI_inv)
 
     # Make scatter plot
-    scatter_plot()
+    scatter_plot(AI, AI_inv)
 
     # Make trace plot
-    trace_plot()
+    trace_plot(AI, AI_inv)
 
+    # Print r2 and PCC scores
+    train_indices = np.linspace(0, 2720, args.n_wells).astype(int)
+    val_indices = np.setdiff1d(np.arange(0, 2720).astype(int), train_indices)
+    r2_pcc_scores(train_indices, val_indices, AI, AI_inv)
 
 
 def plot(img, cmap='rainbow', cbar_label=r'AI ($m/s\times g/cm^3$)', vmin=None, vmax=None):
+    dt = 0.00466
+    dx = 6.25
     Y, X = np.mgrid[slice(0.47, 2.8 + dt, dt), slice(0, 17000 + dx, dx)]
 
     fig = plt.figure(figsize=(20, 6))
@@ -56,14 +60,10 @@ def plot(img, cmap='rainbow', cbar_label=r'AI ($m/s\times g/cm^3$)', vmin=None, 
 
 
 #%% Section figures
-def make_plots():
-    dt = 0.00466
-    dx = 6.25
+def make_plots(AI, AI_inv):
 
     vmin = min([AI.min(), AI_inv.min()])
     vmax = max([AI.max(), AI_inv.max()])
-
-
     fig = plot(AI, vmin=vmin, vmax=vmax)
     fig.savefig('AI.png', bbox_inches='tight')
     fig = plot(AI_inv, vmin=vmin, vmax=vmax)
@@ -72,7 +72,7 @@ def make_plots():
     fig.savefig('difference.png', bbox_inches='tight')
 
 
-def scatter_plot():
+def scatter_plot(AI, AI_inv):
     AI = np.expand_dims(AI, axis=1)
     AI_inv = np.expand_dims(AI_inv, axis=1)
 
@@ -103,12 +103,7 @@ def scatter_plot():
     plt.show()
 
 
-
-
-
-#
-# #%% Trace plots
-def trace_plot():
+def trace_plot(AI, AI_inv):
     AI = np.expand_dims(AI, axis=1)
     AI_inv = np.expand_dims(AI_inv, axis=1)
     x_loc = np.array(
@@ -142,43 +137,38 @@ def trace_plot():
     fig.savefig('AI_traces_svr.png'.format(x_loc), bbox_inches='tight')
 
 
+def r2_pcc_scores(train_indices, val_indices, AI, AI_inv):
+    """
+    Function computes and prints the r2 and pcc on both the training and validation sets
+    """
+    pcc_train = 0
+    r2_train = 0
+    for i in range(len(train_indices)):
+        trace_pred = AI_inv[train_indices[i]]
+        trace_actual = AI[train_indices[i]]
+        pcc_train += np.corrcoef(trace_actual, trace_pred)[0, 1]
+        slope, intercept, r_value, p_value, std_err = linregress(trace_actual, trace_pred)
+        r2_train += r_value ** 2
+    pcc_train = pcc_train / len(train_indices)
+    r2_train = r2_train / len(train_indices)
+
+    pcc_val = 0
+    r2_val = 0
+    for i in range(len(val_indices)):
+        trace_pred = AI_inv[val_indices[i]]
+        trace_actual = AI[val_indices[i]]
+        pcc_val += np.corrcoef(trace_actual, trace_pred)[0, 1]
+        slope, intercept, r_value, p_value, std_err = linregress(trace_actual, trace_pred)
+        r2_val += r_value ** 2
+    pcc_val = pcc_val / len(val_indices)
+    r2_val = r2_val / len(val_indices)
+
+    print('r2_training: {:0.4f} | r2_validation: {:0.4f} | pcc_training: {:0.4f} | pcc_val: {:0.4f}'.format(r2_train,
+                                                                                                            r2_val,
+                                                                                                            pcc_train,
+                                                                                                            pcc_val))
 
 
 
 
-
-# Compute Pearson Correlation coefficients and r2 coeffs for training and test traces
-train_indices = np.arange(0, 2721, 150).tolist()  # 150 is the sampling interval I used
-val_indices = np.arange(0, 2721).tolist()
-val_indices = np.setdiff1d(val_indices, train_indices)
-
-pcc_train = 0
-r2_train = 0
-for i in range(len(train_indices)):
-    trace_pred = predicted[train_indices[i]]
-    trace_actual = actual[train_indices[i]]
-    pcc_train += np.corrcoef(trace_actual, trace_pred)[0, 1]
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(trace_actual, trace_pred)
-    r2_train += r_value**2
-pcc_train = pcc_train/len(train_indices)
-r2_train = r2_train/len(train_indices)
-
-pcc_val = 0
-r2_val = 0
-for i in range(len(val_indices)):
-    trace_pred = predicted[val_indices[i]]
-    trace_actual = actual[val_indices[i]]
-    pcc_val += np.corrcoef(trace_actual, trace_pred)[0, 1]
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(trace_actual, trace_pred)
-    r2_val += r_value ** 2
-pcc_val = pcc_val/len(val_indices)
-r2_val = r2_val/len(val_indices)
-
-
-# Now to compute the losses
-tmp1 = (predicted[train_indices] - actual[train_indices])**2
-train_loss = np.sum(tmp1) / len(tmp1.flatten())
-
-tmp2 = (predicted[val_indices] - actual[val_indices])**2
-val_loss = np.sum(tmp2) / len(tmp2.flatten())
 
