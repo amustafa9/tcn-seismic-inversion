@@ -32,8 +32,9 @@ def train_val_split(args):
     # Standardize features and targets
     x_train_norm, y_train_norm = (x_train - x_train.mean())/ x_train.std(), (y_train - y_train.mean()) / y_train.std()
     x_val_norm, y_val_norm = (x_val - x_train.mean())/ x_train.std(), (y_val - y_train.mean()) / y_train.std()
+    seismic_offsets = (seismic_offsets - x_train.mean()) / x_train.std()
 
-    return x_train_norm, y_train_norm, x_val_norm, y_val_norm
+    return x_train_norm, y_train_norm, x_val_norm, y_val_norm, seismic_offsets
 
 
 #%% Define train function
@@ -42,18 +43,19 @@ def train(args):
     Sets up the model to train
     """
     # Create a writer object to log events during training
-    writer = SummaryWriter(pjoin('runs', 'fourth_exp'))
+    writer = SummaryWriter(pjoin('runs', 'fifth_exp'))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Load splits
-    x_train, y_train, x_val, y_val = train_val_split(args)
+    x_train, y_train, x_val, y_val, seismic = train_val_split(args)
 
     # Convert to torch tensors in the form (N, C, L)
     x_train = torch.from_numpy(np.expand_dims(x_train, 1)).float().to(device)
     y_train = torch.from_numpy(np.expand_dims(y_train, 1)).float().to(device)
     x_val = torch.from_numpy(np.expand_dims(x_val, 1)).float().to(device)
     y_val = torch.from_numpy(np.expand_dims(y_val, 1)).float().to(device)
+    seismic = torch.from_numpy(np.expand_dims(seismic, 1)).float().to(device)
 
     # Set up the dataloader for training dataset
     dataset = SeismicLoader(x_train, y_train)
@@ -97,9 +99,19 @@ def train(args):
                     y_pred = model(x_val)
                     loss = criterion(y_pred, y_val)
                     val_loss.append(loss.item())
+                    writer.add_scalar(tag='Validation Loss', scalar_value=loss.item(), global_step=iter)
             print('epoch:{} - Training loss: {:0.4f} | Validation loss: {:0.4f}'.format(epoch,
                                                                                         train_loss[-1],
                                                                                         val_loss[-1]))
+
+            if epoch % 100 == 0:
+                with torch.no_grad():
+                    model.eval()
+                    AI_inv = model(seismic)
+                fig, ax = plt.subplots()
+                ax.imshow(AI_inv[:, 0].detach().cpu().numpy().squeeze().T, cmap="rainbow")
+                ax.set_aspect(4)
+                writer.add_figure('Inverted Acoustic Impedance', fig, iter)
         iter += 1
 
     writer.close()
