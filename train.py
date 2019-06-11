@@ -5,6 +5,7 @@ import torch
 import numpy as np
 from torch.utils.data import DataLoader
 from sklearn import preprocessing
+from tensorboardX import SummaryWriter
 
 from core.utils import *
 from core.data_loader import *
@@ -42,6 +43,8 @@ def train(args):
     """
     Sets up the model to train
     """
+    # Create a writer object to log events during training
+    writer = SummaryWriter(pjoin('runs', 'first_exp'))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -78,7 +81,7 @@ def train(args):
     # Set up list to store the losses
     train_loss = [np.inf]
     val_loss = [np.inf]
-
+    iter = 0
     # Start training
     for epoch in range(args.n_epoch):
         for x, y in train_loader:
@@ -89,6 +92,7 @@ def train(args):
             loss.backward()
             optimizer.step()
             train_loss.append(loss.item())
+            writer.add_scalar(tag='Training Loss', scalar_value=loss.item(), global_step=iter)
             if epoch % 20 == 0:
                 with torch.no_grad():
                     model.eval()
@@ -98,6 +102,9 @@ def train(args):
             print('epoch:{} - Training loss: {:0.4f} | Validation loss: {:0.4f}'.format(epoch,
                                                                                         train_loss[-1],
                                                                                         val_loss[-1]))
+        iter += 1
+
+    writer.close()
 
     # Set up directory to save results
     results_directory = 'results'
