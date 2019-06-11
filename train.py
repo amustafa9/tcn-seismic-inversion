@@ -30,10 +30,8 @@ def train_val_split(args):
     x_val, y_val = seismic_offsets[val_indices], impedance[val_indices]
 
     # Standardize features and targets
-    feature_scaler = preprocessing.StandardScaler().fit(x_train)
-    target_scaler = preprocessing.StandardScaler().fit(y_train)
-    x_train_norm, y_train_norm = feature_scaler.transform(x_train), target_scaler.transform(y_train)
-    x_val_norm, y_val_norm = feature_scaler.transform(x_val), target_scaler.transform(y_val)
+    x_train_norm, y_train_norm = (x_train - x_train.mean())/ x_train.std(), (y_train - y_train.mean()) / y_train.std()
+    x_val_norm, y_val_norm = (x_val - x_train.mean())/ x_train.std(), (y_val - y_train.mean()) / y_train.std()
 
     return x_train_norm, y_train_norm, x_val_norm, y_val_norm
 
@@ -44,7 +42,7 @@ def train(args):
     Sets up the model to train
     """
     # Create a writer object to log events during training
-    writer = SummaryWriter(pjoin('runs', 'first_exp'))
+    writer = SummaryWriter(pjoin('runs', 'fourth_exp'))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -129,7 +127,7 @@ def train(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Hyperparams')
-    parser.add_argument('--n_epoch', nargs='?', type=int, default=50,
+    parser.add_argument('--n_epoch', nargs='?', type=int, default=1000,
                         help='# of the epochs.')
     parser.add_argument('--batch_size', nargs='?', type=int, default=19,
                         help='Batch size. Default is mini-batch with batch size of 1.')
