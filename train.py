@@ -5,6 +5,7 @@ import torch
 import numpy as np
 from torch.utils.data import DataLoader
 from sklearn import preprocessing
+from tensorboardX import SummaryWriter
 
 from core.utils import *
 from core.data_loader import *
@@ -30,12 +31,11 @@ def train_val_split(args):
     x_val, y_val = seismic_offsets[val_indices], impedance[val_indices]
 
     # Standardize features and targets
-    feature_scaler = preprocessing.StandardScaler().fit(x_train)
-    target_scaler = preprocessing.StandardScaler().fit(y_train)
-    x_train_norm, y_train_norm = feature_scaler.transform(x_train), target_scaler.transform(y_train)
-    x_val_norm, y_val_norm = feature_scaler.transform(x_val), target_scaler.transform(y_val)
+    x_train_norm, y_train_norm = (x_train - x_train.mean())/ x_train.std(), (y_train - y_train.mean()) / y_train.std()
+    x_val_norm, y_val_norm = (x_val - x_train.mean())/ x_train.std(), (y_val - y_train.mean()) / y_train.std()
+    seismic_offsets = (seismic_offsets - x_train.mean()) / x_train.std()
 
-    return x_train_norm, y_train_norm, x_val_norm, y_val_norm
+    return x_train_norm, y_train_norm, x_val_norm, y_val_norm, seismic_offsets
 
 
 #%% Define train function
@@ -43,17 +43,20 @@ def train(args):
     """
     Sets up the model to train
     """
+    # Create a writer object to log events during training
+    writer = SummaryWriter(pjoin('runs', 'fifth_exp'))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Load splits
-    x_train, y_train, x_val, y_val = train_val_split(args)
+    x_train, y_train, x_val, y_val, seismic = train_val_split(args)
 
     # Convert to torch tensors in the form (N, C, L)
     x_train = torch.from_numpy(np.expand_dims(x_train, 1)).float().to(device)
     y_train = torch.from_numpy(np.expand_dims(y_train, 1)).float().to(device)
     x_val = torch.from_numpy(np.expand_dims(x_val, 1)).float().to(device)
     y_val = torch.from_numpy(np.expand_dims(y_val, 1)).float().to(device)
+    seismic = torch.from_numpy(np.expand_dims(seismic, 1)).float().to(device)
 
     # Set up the dataloader for training dataset
     dataset = SeismicLoader(x_train, y_train)
@@ -79,7 +82,7 @@ def train(args):
     # Set up list to store the losses
     train_loss = [np.inf]
     val_loss = [np.inf]
-
+    iter = 0
     # Start training
     for epoch in range(args.n_epoch):
         for x, y in train_loader:
@@ -90,15 +93,29 @@ def train(args):
             loss.backward()
             optimizer.step()
             train_loss.append(loss.item())
+            writer.add_scalar(tag='Training Loss', scalar_value=loss.item(), global_step=iter)
             if epoch % 20 == 0:
                 with torch.no_grad():
                     model.eval()
                     y_pred = model(x_val)
                     loss = criterion(y_pred, y_val)
                     val_loss.append(loss.item())
+                    writer.add_scalar(tag='Validation Loss', scalar_value=loss.item(), global_step=iter)
             print('epoch:{} - Training loss: {:0.4f} | Validation loss: {:0.4f}'.format(epoch,
                                                                                         train_loss[-1],
                                                                                         val_loss[-1]))
+
+            if epoch % 100 == 0:
+                with torch.no_grad():
+                    model.eval()
+                    AI_inv = model(seismic)
+                fig, ax = plt.subplots()
+                ax.imshow(AI_inv[:, 0].detach().cpu().numpy().squeeze().T, cmap="rainbow")
+                ax.set_aspect(4)
+                writer.add_figure('Inverted Acoustic Impedance', fig, iter)
+        iter += 1
+
+    writer.close()
 
     # Set up directory to save results
     results_directory = 'results'
@@ -123,7 +140,7 @@ def train(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Hyperparams')
-    parser.add_argument('--n_epoch', nargs='?', type=int, default=50,
+    parser.add_argument('--n_epoch', nargs='?', type=int, default=1000,
                         help='# of the epochs.')
     parser.add_argument('--batch_size', nargs='?', type=int, default=19,
                         help='Batch size. Default is mini-batch with batch size of 1.')
