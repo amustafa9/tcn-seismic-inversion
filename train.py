@@ -12,13 +12,13 @@ from core.data_loader import *
 from core.model import *
 from core.results import *
 
-#%% Fix the random seeds
+# Fix the random seeds
 torch.backends.cudnn.deterministic = True
 if torch.cuda.is_available(): torch.cuda.manual_seed_all(2019)
 np.random.seed(seed=2019)
 
 
-#%% Define function to perform train-val split
+# Define function to perform train-val split
 def train_val_split(args):
     # Load data
     seismic_offsets = marmousi_seismic().squeeze()[:, 100:600]  # dim= No_of_gathers x trace_length
@@ -38,7 +38,7 @@ def train_val_split(args):
     return x_train_norm, y_train_norm, x_val_norm, y_val_norm, seismic_offsets
 
 
-#%% Define train function
+# Define train function
 def train(args):
     """
     Sets up the model to train
@@ -135,7 +135,6 @@ def train(args):
     np.save(pjoin(results_directory, 'AI.npy'), marmousi_model().T[:, 100:600])
     np.save(pjoin(results_directory, 'AI_inv.npy'), AI_inv.detach().numpy().squeeze())
     print('Results successfully saved.')
-        #%%
 
 
 if __name__ == "__main__":
