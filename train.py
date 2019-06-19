@@ -4,7 +4,6 @@ import argparse
 import torch
 import numpy as np
 from torch.utils.data import DataLoader
-from sklearn import preprocessing
 from tensorboardX import SummaryWriter
 
 from core.utils import *
@@ -44,7 +43,7 @@ def train(args):
     Sets up the model to train
     """
     # Create a writer object to log events during training
-    writer = SummaryWriter(pjoin('runs', 'fifth_exp'))
+    writer = SummaryWriter(pjoin('runs', 'exp_1'))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -76,8 +75,8 @@ def train(args):
 
     # Define Optimizer
     optimizer = torch.optim.Adam(model.parameters(),
-                                 weight_decay=0.0001,
-                                 lr=0.001)
+                                 weight_decay=args.weight_decay,
+                                 lr=args.lr)
 
     # Set up list to store the losses
     train_loss = [np.inf]
@@ -126,7 +125,7 @@ def train(args):
         model.eval()
         AI_inv = model(seismic_offsets)
 
-    if not os.path.exists(results_directory):
+    if not os.path.exists(results_directory):  # Make results directory if it doesn't already exist
         os.mkdir(results_directory)
         print('Saving results...')
     else:
@@ -147,10 +146,14 @@ if __name__ == "__main__":
                         help='No of channels in each temporal block of the tcn.')
     parser.add_argument('--kernel_size', nargs='?', type=int, default=5,
                         help='kernel size for the tcn')
-    parser.add_argument('--dropout', nargs='?', type=int, default=0.2,
+    parser.add_argument('--dropout', nargs='?', type=float, default=0.2,
                         help='Dropout for the tcn')
     parser.add_argument('--n_wells', nargs='?', type=int, default=19,
                         help='# of well-logs used for training')
+    parser.add_argument('--lr', nargs='?', type=float, default=0.001,
+                        help='learning rate parameter for the adam optimizer')
+    parser.add_argument('--weight_decay', nargs='?', type=float, default=0.0001,
+                        help='weight decay parameter for the adam optimizer')
 
     args = parser.parse_args()
     train(args)
