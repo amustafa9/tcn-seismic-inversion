@@ -31,8 +31,8 @@ def train_val_split(args):
     x_val, y_val = seismic_offsets[val_indices], impedance[val_indices]
 
     # Standardize features and targets
-    x_train_norm, y_train_norm = (x_train - x_train.mean())/ x_train.std(), (y_train - y_train.mean()) / y_train.std()
-    x_val_norm, y_val_norm = (x_val - x_train.mean())/ x_train.std(), (y_val - y_train.mean()) / y_train.std()
+    x_train_norm, y_train_norm = (x_train - x_train.mean()) / x_train.std(), (y_train - y_train.mean()) / y_train.std()
+    x_val_norm, y_val_norm = (x_val - x_train.mean()) / x_train.std(), (y_val - y_train.mean()) / y_train.std()
     seismic_offsets = (seismic_offsets - x_train.mean()) / x_train.std()
 
     return x_train_norm, y_train_norm, x_val_norm, y_val_norm, seismic_offsets
