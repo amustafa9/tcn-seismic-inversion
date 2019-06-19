@@ -10,6 +10,7 @@ from core.utils import *
 from core.data_loader import *
 from core.model import *
 from core.results import *
+
 #%% Fix the random seeds
 torch.backends.cudnn.deterministic = True
 if torch.cuda.is_available(): torch.cuda.manual_seed_all(2019)
