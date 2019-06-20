@@ -21,12 +21,23 @@ gradient vanishing in Recurrent Neural Networks, or overfitting in Convolutional
 was used to predict AI on Marmousi 2 dataset with an average r2 coefficient of 91% on a hold-out validation set. 
  
 ## Dataset
-Create a directory called `data`. Download the data from this 
+Create a directory called `data` inside the parent directory containing the project files. Download the data from this 
 [link](https://www.dropbox.com/s/jly7m44r84ecw0c/data.zip?dl=0) and unzip the contents of the file in the `data` folder.
 
 ## Running the code
-
-
+After scrolling to the directory containing the project, in the command line, run:
+```
+python train.py 
+```
+This will run the *train.py* file with the default settings for all the parameters. To view all these along with their 
+default values, run:
+```
+python train.py -h
+```
+If you want to change, say the number of epochs to 1200, just run:
+```
+python train.py --n_epochs 1200
+```
 
 ## Citation 
 If you have found our code and data useful, we humbly request you to cite our work. You can cite the arXiv preprint:
