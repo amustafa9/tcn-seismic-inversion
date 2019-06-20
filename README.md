@@ -18,13 +18,13 @@ for hydrocarbon exploration. In this work, we propose a workflow for predicting 
 data using a network architecture based on Temporal Convolutional Network by posing the problem as that of sequence 
 modeling. The proposed workflow overcomes some of the problems that other network architectures usually face, like 
 gradient vanishing in Recurrent Neural Networks, or overfitting in Convolutional Neural Networks. The proposed workflow
-was used to predict AI on Marmousi 2 dataset with an average r2 coefficient of 91% on a hold-out validation set. 
+was used to predict AI on Marmousi 2 dataset with an average r`html <sup>2<\sup>` coefficient of 91% on a hold-out validation set. 
  
 ## Dataset
 Create a directory called `data` inside the parent directory containing the project files. Download the data from this 
 [link](https://www.dropbox.com/s/jly7m44r84ecw0c/data.zip?dl=0) and unzip the contents of the file in the `data` folder.
 
-## Running the code
+## Running the Code
 After scrolling to the directory containing the project, in the command line, run:
 ```
 python train.py 
@@ -38,6 +38,16 @@ If you want to change, say the number of epochs to 1200, just run:
 ```
 python train.py --n_epochs 1200
 ```
+
+### Inspecting the Results
+The training and validation losses will be printed on the terminal along with the epoch number. After the training is 
+over, the images for the ground-truth AI model, the predicted AI model, the absolute difference between the two, and a 
+figure showing hand-picked predicted AI traces superimposed on their ground-truth traces will be printed on the screen.
+You can also view the training and validation loss curves along with the predicted AI images in *tensorboard* by 
+running:
+```
+tensorboard --logdir path/to/log-directory
+```  
 
 ## Citation 
 If you have found our code and data useful, we humbly request you to cite our work. You can cite the arXiv preprint:
