@@ -139,21 +139,21 @@ def train(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Hyperparams')
     parser.add_argument('--n_epoch', nargs='?', type=int, default=1000,
-                        help='# of the epochs.')
+                        help='# of the epochs. Default = 1000')
     parser.add_argument('--batch_size', nargs='?', type=int, default=19,
-                        help='Batch size. Default is mini-batch with batch size of 1.')
+                        help='Batch size. Default = 1.')
     parser.add_argument('--tcn_layer_channels', nargs='+', type=int, default=[3, 5, 5, 5, 6, 6],
-                        help='No of channels in each temporal block of the tcn.')
+                        help='No of channels in each temporal block of the tcn. Default = numbers reported in paper')
     parser.add_argument('--kernel_size', nargs='?', type=int, default=5,
-                        help='kernel size for the tcn')
+                        help='kernel size for the tcn. Default = 5')
     parser.add_argument('--dropout', nargs='?', type=float, default=0.2,
-                        help='Dropout for the tcn')
+                        help='Dropout for the tcn. Default = 0.2')
     parser.add_argument('--n_wells', nargs='?', type=int, default=19,
-                        help='# of well-logs used for training')
+                        help='# of well-logs used for training. Default = 19')
     parser.add_argument('--lr', nargs='?', type=float, default=0.001,
-                        help='learning rate parameter for the adam optimizer')
+                        help='learning rate parameter for the adam optimizer. Default = 0.001')
     parser.add_argument('--weight_decay', nargs='?', type=float, default=0.0001,
-                        help='weight decay parameter for the adam optimizer')
+                        help='weight decay parameter for the adam optimizer. Default = 0.0001')
 
     args = parser.parse_args()
     train(args)
