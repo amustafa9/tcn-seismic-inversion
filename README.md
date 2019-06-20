@@ -18,7 +18,7 @@ for hydrocarbon exploration. In this work, we propose a workflow for predicting 
 data using a network architecture based on Temporal Convolutional Network by posing the problem as that of sequence 
 modeling. The proposed workflow overcomes some of the problems that other network architectures usually face, like 
 gradient vanishing in Recurrent Neural Networks, or overfitting in Convolutional Neural Networks. The proposed workflow
-was used to predict AI on Marmousi 2 dataset with an average r`html <sup>2<\sup>` coefficient of 91% on a hold-out validation set. 
+was used to predict AI on Marmousi 2 dataset with an average `r<p><sup>2</sup></p>` coefficient of 91% on a hold-out validation set. 
  
 ## Dataset
 Create a directory called `data` inside the parent directory containing the project files. Download the data from this 
