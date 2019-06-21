@@ -1,4 +1,4 @@
-# This script trains the model defined in model file on the seismic offset gathers
+# This script trains the model defined in model file on the marmousi post-stack seismic gathers
 import argparse
 
 import torch
@@ -19,6 +19,12 @@ np.random.seed(seed=2019)
 
 # Define function to perform train-val split
 def train_val_split(args):
+    """Splits dataset into training and validation based on the number of well-logs specified by the user.
+
+    The training traces are sampled uniformly along the length of the model. The validation data is all of the
+    AI model except the training traces. Mean and Standard deviation are computed on the training data and used to
+    standardize both the training and validation datasets.
+    """
     # Load data
     seismic_offsets = marmousi_seismic().squeeze()[:, 100:600]  # dim= No_of_gathers x trace_length
     impedance = marmousi_model().T[:, 100:600]  # dim = No_of_traces x trace_length
@@ -39,9 +45,7 @@ def train_val_split(args):
 
 # Define train function
 def train(args):
-    """
-    Sets up the model to train
-    """
+    """Sets up the model to train"""
     # Create a writer object to log events during training
     writer = SummaryWriter(pjoin('runs', 'exp_1'))
 
