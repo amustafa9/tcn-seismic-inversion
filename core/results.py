@@ -11,9 +11,7 @@ from scipy.stats import linregress
 #%%
 
 def evaluate(args):
-    """
-    Function makes plots on the results and also calculates pcc and r2 scores on both the validation and training data
-    """
+    """Function makes plots on the results and also calculates pcc and r2 scores on both the validation and training data"""
 
     # Load data
     AI = np.load(pjoin('results', 'AI.npy'))
@@ -35,6 +33,7 @@ def evaluate(args):
 
 
 def plot(img, cmap='rainbow', cbar_label=r'AI ($m/s\times g/cm^3$)', vmin=None, vmax=None):
+    """Makes seaborn style plots"""
     dt = 0.00466
     dx = 6.25
     Y, X = np.mgrid[slice(0.47, 2.8 + dt, dt), slice(0, 17000 + dx, dx)]
@@ -61,7 +60,7 @@ def plot(img, cmap='rainbow', cbar_label=r'AI ($m/s\times g/cm^3$)', vmin=None, 
 
 #%% Section figures
 def make_plots(AI, AI_inv):
-
+    """Generate and save true and predicted AI plots"""
     vmin = min([AI.min(), AI_inv.min()])
     vmax = max([AI.max(), AI_inv.max()])
     fig = plot(AI, vmin=vmin, vmax=vmax)
@@ -73,9 +72,9 @@ def make_plots(AI, AI_inv):
 
 
 def scatter_plot(AI, AI_inv):
+    """Generate scatter plot between true and predicted AI"""
     AI = np.expand_dims(AI, axis=1)
     AI_inv = np.expand_dims(AI_inv, axis=1)
-
     sns.set(style="whitegrid")
     fig = plt.figure()
     np.random.seed(30)
@@ -104,6 +103,16 @@ def scatter_plot(AI, AI_inv):
 
 
 def trace_plot(AI, AI_inv):
+    """
+    Generates a figure showing handpicked traces from true and predicted AI models superimposed on each other.
+
+    Parameters
+    ----------
+    AI: numpy array
+       The true AI model
+    AI_inv: numpy array
+           The predicted AI model
+    """
     AI = np.expand_dims(AI, axis=1)
     AI_inv = np.expand_dims(AI_inv, axis=1)
     x_loc = np.array(
@@ -138,9 +147,7 @@ def trace_plot(AI, AI_inv):
 
 
 def r2_pcc_scores(train_indices, val_indices, AI, AI_inv):
-    """
-    Function computes and prints the r2 and pcc on both the training and validation sets
-    """
+    """Function computes and prints the r2 and pcc on both the training and validation sets"""
     pcc_train = 0
     r2_train = 0
     for i in range(len(train_indices)):
