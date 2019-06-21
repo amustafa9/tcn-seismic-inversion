@@ -3,9 +3,20 @@ Ahmad Mustafa, [Motaz Alfarraj](http://www.motaz.me), and [Ghasssan AlRegib](htt
 
 This repository includes the codes for the paper:
 
-'**Estimation of Acoustic Impedance from Seismic Data using Temporal Convolutional Network**', Expanded Abstracts of the SEG Annual Meeting , San Antonio, TX, Sep. 15-20, 2019. [PDF](https://arxiv.org/abs/1906.02684)
+'**Estimation of Acoustic Impedance from Seismic Data using Temporal Convolutional Network**', Expanded Abstracts of
+ the SEG Annual Meeting , San Antonio, TX, Sep. 15-20, 2019. [[PDF]](https://arxiv.org/abs/1906.02684)
 
-The code has been built in Python in the popular deep learning framework, [Pytorch](https://pytorch.org/).
+The code has been built in Python 3.7.0 and requires the following dependencies before it can be run:
+```
+numpy 1.15.1
+matplotlib 3.0.0
+pytorch 0.4.1
+seaborn 0.9.0
+segyio 1.7.0
+tensorboard 1.13.1
+tensorboardx 1.7
+tensorflow 1.13.1
+```
 
 ## Abstract
 
