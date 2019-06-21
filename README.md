@@ -16,6 +16,8 @@ segyio 1.7.0
 tensorboard 1.13.1
 tensorboardx 1.7
 tensorflow 1.13.1
+pandas 0.24.2
+scipy 1.1.0
 ```
 
 ## Abstract

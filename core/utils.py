@@ -10,18 +10,14 @@ import segyio
 
 
 def marmousi_seismic():
-    """
-    Function returns the seismic data that comes with the marmousi model
-    """
+    """Function returns the seismic data that comes with the marmousi model"""
     seismic = segyio.cube(pjoin('data', 'SYNTHETIC.segy'))
     seismic = np.transpose(seismic, axes=[1, 0, 2])
     return seismic
 
 
 def marmousi_model():
-    """
-    Function returns the marmousi acoustic impedance model
-    """
+    """Function returns the marmousi acoustic impedance model"""
     den_file = segyio.open(pjoin('data', 'MODEL_DENSITY_1.25m.segy'))
     rho = segyio.cube(den_file).squeeze().T
     rho = rho[::4, ::5]
