@@ -8,10 +8,10 @@ import seaborn as sns
 import pandas as pd
 from scipy.stats import linregress
 
-#%%
 
 def evaluate(args):
-    """Function makes plots on the results and also calculates pcc and r2 scores on both the validation and training data"""
+    """Function makes plots on the results and also calculates pcc and r2 scores on both the validation and training
+    data"""
 
     # Load data
     AI = np.load(pjoin('results', 'AI.npy'))
@@ -58,7 +58,6 @@ def plot(img, cmap='rainbow', cbar_label=r'AI ($m/s\times g/cm^3$)', vmin=None, 
     return fig
 
 
-#%% Section figures
 def make_plots(AI, AI_inv):
     """Generate and save true and predicted AI plots"""
     vmin = min([AI.min(), AI_inv.min()])
