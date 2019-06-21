@@ -79,7 +79,6 @@ class TCN(nn.Module):
     def forward(self, inputs):
         """Inputs have to have dimension (N, C_in, L_in)"""
         y = self.tcn(inputs)  # input should have dimension (N, C, L)
-        #res = F.relu(self.global_residual(inputs))
         y = torch.cat((y, inputs), dim=1)
         out = self.out(y.transpose(1, 2)).transpose(1, 2)
         return out
