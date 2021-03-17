@@ -146,7 +146,7 @@ if __name__ == "__main__":
                         help='# of the epochs. Default = 1000')
     parser.add_argument('--batch_size', nargs='?', type=int, default=19,
                         help='Batch size. Default = 1.')
-    parser.add_argument('--tcn_layer_channels', nargs='+', type=int, default=[3, 5, 5, 5, 6, 6],
+    parser.add_argument('--tcn_layer_channels', nargs='+', type=int, default=[3, 5, 5, 5, 6, 6, 6],
                         help='No of channels in each temporal block of the tcn. Default = numbers reported in paper')
     parser.add_argument('--kernel_size', nargs='?', type=int, default=5,
                         help='kernel size for the tcn. Default = 5')
