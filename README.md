@@ -32,7 +32,7 @@ was used to predict AI on Marmousi 2 dataset with an average r<sup>2</sup> coeff
  
 ## Dataset
 Create a directory called `data` inside the parent directory containing the project files. Download the data from this 
-[link](https://www.dropbox.com/s/jly7m44r84ecw0c/data.zip?dl=0) and unzip the contents of the file in the `data` folder.
+[link](https://www.dropbox.com/sh/caxmz94vo3ms2bl/AABTWb2KRrKzLRinfwG0G7UGa?dl=0) and unzip the contents of the file in the `data` folder.
 
 ## Running the Code
 After scrolling to the directory containing the project, in the command line, run:
@@ -60,14 +60,21 @@ tensorboard --logdir path/to/log-directory
 ```  
 
 ## Citation 
-If you have found our code and data useful, we humbly request you to cite our work. You can cite the arXiv preprint:
+If you have found our code and data useful, we humbly request you to cite our work. You can cite the SEG abstract as:
 ```tex
-@incollection{amustafa2019AI,
-title=Estimation of Acoustic Impedance from Seismic Data using Temporal Convolutional Network,
-author=Mustafa, Ahmad and AlRegib, Ghassan,
-booktitle=arXiv:1906.02684,
-year=2019,
-publisher=Society of Exploration Geophysicists}
+@inbook{doi:10.1190/segam2019-3216840.1,
+author = {Ahmad Mustafa and Motaz Alfarraj and Ghassan AlRegib},
+title = {Estimation of acoustic impedance from seismic data using temporal convolutional network},
+booktitle = {SEG Technical Program Expanded Abstracts 2019},
+chapter = {},
+pages = {2554-2558},
+year = {2019},
+doi = {10.1190/segam2019-3216840.1},
+URL = {https://library.seg.org/doi/abs/10.1190/segam2019-3216840.1},
+eprint = {https://library.seg.org/doi/pdf/10.1190/segam2019-3216840.1},
+    abstract = { In exploration seismology, seismic inversion refers to the process of inferring physical properties of the subsurface from seismic data. Knowledge of physical properties can prove helpful in identifying key structures in the subsurface for hydrocarbon exploration. In this work, we propose a workflow for predicting acoustic impedance (AI) from seismic data using a network architecture based on Temporal Convolutional Network by posing the problem as that of sequence modeling. The proposed workflow overcomes some of the problems that other network architectures usually face, like gradient vanishing in Recurrent Neural Networks, or overfitting in Convolutional Neural Networks. The proposed workflow was used to predict AI on Marmousi 2 dataset with an average r2 coefficient of 91\% on a hold-out validation set.Presentation Date: Wednesday, September 18, 2019Session Start Time: 9:20 AMPresentation Time: 9:45 AMLocation: Poster Station 1Presentation Type: Poster }
+}
+
 ```
 The arXiv preprint is available at: [https://arxiv.org/abs/1906.02684](https://arxiv.org/abs/1906.02684)
 
